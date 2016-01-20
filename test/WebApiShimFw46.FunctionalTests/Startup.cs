@@ -25,7 +25,7 @@ namespace SampleWebAPIIntegration
         // Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddInstance<ITelemetryChannel>(new BackTelemetryChannel());
+            services.AddSingleton<ITelemetryChannel>(new BackTelemetryChannel());
             services.AddApplicationInsightsTelemetry(Configuration);
 
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.

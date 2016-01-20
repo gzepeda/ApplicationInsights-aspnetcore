@@ -7,7 +7,7 @@
     },
   "dependencies": {
     "Microsoft.AspNet.Server.WebListener": "1.0.0-rc1-*",
-    "Microsoft.ApplicationInsights.AspNet": "1.0.0-rc1-*",
+    "Microsoft.ApplicationInsights.AspNet": "1.0.0-rc2-*",
     "FunctionalTestUtils": "1.0.0-rc1-*",
     "xunit.runner.aspnet": "2.0.0-aspnet-rc1-*",
     "Microsoft.AspNet.Diagnostics": "1.0.0-rc1-*"

@@ -8,6 +8,7 @@
     using Microsoft.ApplicationInsights.Extensibility.Implementation;
     using Microsoft.AspNet.Builder;
     using Xunit;
+    using Microsoft.AspNet.Http;
 
     public class ExceptionTrackingMiddlewareTest
     {

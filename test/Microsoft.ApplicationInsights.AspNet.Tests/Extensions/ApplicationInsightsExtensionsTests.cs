@@ -20,8 +20,8 @@
         {
             var services = new ServiceCollection();
             IHttpContextAccessor contextAccessor = new HttpContextAccessor();
-            services.AddInstance<IHttpContextAccessor>(contextAccessor);
-            services.AddInstance<DiagnosticListener>(new DiagnosticListener("TestListener"));
+            services.AddSingleton<IHttpContextAccessor>(contextAccessor);
+            services.AddSingleton<DiagnosticListener>(new DiagnosticListener("TestListener"));
             return services;
         }
 
@@ -175,7 +175,7 @@
             {
                 var telemetryInitializer = new FakeTelemetryInitializer();
                 var services = ApplicationInsightsExtensionsTests.GetServiceCollectionWithContextAccessor();
-                services.AddInstance<ITelemetryInitializer>(telemetryInitializer);
+                services.AddSingleton<ITelemetryInitializer>(telemetryInitializer);
 
                 services.AddApplicationInsightsTelemetry(new ConfigurationBuilder().Build());
 
@@ -189,7 +189,7 @@
             {
                 var telemetryChannel = new FakeTelemetryChannel();
                 var services = ApplicationInsightsExtensionsTests.GetServiceCollectionWithContextAccessor();
-                services.AddInstance<ITelemetryChannel>(telemetryChannel);
+                services.AddSingleton<ITelemetryChannel>(telemetryChannel);
 
                 services.AddApplicationInsightsTelemetry(new ConfigurationBuilder().Build());
 

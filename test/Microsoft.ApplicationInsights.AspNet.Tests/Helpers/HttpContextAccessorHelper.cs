@@ -22,18 +22,18 @@
             request.Path = new PathString("/Test");
             var contextAccessor = new HttpContextAccessor() { HttpContext = request.HttpContext };
 
-            services.AddInstance<IHttpContextAccessor>(contextAccessor);
+            services.AddSingleton<IHttpContextAccessor>(contextAccessor);
 
             if (actionContext != null)
             {
                 var si = new ActionContextAccessor();
                 si.ActionContext = actionContext;
-                services.AddInstance<IActionContextAccessor>(si);
+                services.AddSingleton<IActionContextAccessor>(si);
             }
 
             if (requestTelemetry != null)
             {
-                services.AddInstance<RequestTelemetry>(requestTelemetry);
+                services.AddSingleton<RequestTelemetry>(requestTelemetry);
             }
 
             IServiceProvider serviceProvider = services.BuildServiceProvider();

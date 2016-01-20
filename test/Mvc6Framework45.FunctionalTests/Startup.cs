@@ -41,7 +41,7 @@ namespace Mvc6Framework45.FunctionalTests
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddInstance<ITelemetryChannel>(new BackTelemetryChannel());
+            services.AddSingleton<ITelemetryChannel>(new BackTelemetryChannel());
             services.AddApplicationInsightsTelemetry(Configuration);
 
             // Add Application settings to the services container.
