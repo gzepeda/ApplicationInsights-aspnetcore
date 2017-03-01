@@ -1,24 +1,21 @@
 ﻿namespace FunctionalTestUtils
 {
     using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+    using System.IO;
     using Microsoft.ApplicationInsights.Channel;
-    using Microsoft.AspNet.Hosting;
-    using Microsoft.AspNet.Hosting.Server;
-    using Microsoft.AspNet.Http.Features;
-    using Microsoft.Dnx.Runtime;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Configuration.Memory;
-    using Microsoft.Extensions.PlatformAbstractions;
 
-    // a variant of aspnet/Hosting/test/Microsoft.AspNet.Hosting.Tests/HostingEngineTests.cs
+    // a variant of aspnet/Hosting/test/Microsoft.AspNetCore.Hosting.Tests/HostingEngineTests.cs
     public class InProcessServer : IDisposable
     {
         private static Random random = new Random();
-        
-        private IDisposable hostingEngine;
+
+        public static Func<IWebHostBuilder, IWebHostBuilder> UseApplicationInsights =
+            builder => builder.UseApplicationInsights();
+
+        private readonly Func<IWebHostBuilder, IWebHostBuilder> configureHost;
+        private IWebHost hostingEngine;
         private string url;
 
         private readonly BackTelemetryChannel backChannel;
@@ -30,9 +27,10 @@
                 return this.backChannel;
             }
         }
-        
-        public InProcessServer(string assemblyName)
+
+        public InProcessServer(string assemblyName, Func<IWebHostBuilder, IWebHostBuilder> configureHost = null)
         {
+            this.configureHost = configureHost;
             this.url = "http://localhost:" + random.Next(5000, 14000).ToString();
             this.backChannel = this.Start(assemblyName);
         }
@@ -49,20 +47,22 @@
 
         private BackTelemetryChannel Start(string assemblyName)
         {
-            var customConfig = new MemoryConfigurationProvider();
-            customConfig.Set("server.urls", this.BaseHost);
-            var configBuilder = new ConfigurationBuilder();
-            configBuilder.Add(customConfig);
-            var config = configBuilder.Build();
-
-            var engine = CreateBuilder(config)
-                .UseServer("Microsoft.AspNet.Server.WebListener")
+            var builder = new WebHostBuilder()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseUrls(this.BaseHost)
+                .UseKestrel()
                 .UseStartup(assemblyName)
-                .UseEnvironment("Production")
-                .Build();
-            this.hostingEngine = engine.Start();
-            this.ApplicationServices = engine.ApplicationServices;
-            return (BackTelemetryChannel)engine.ApplicationServices.GetService<ITelemetryChannel>();
+                .UseEnvironment("Production");
+            if (configureHost != null)
+            {
+                builder = configureHost(builder);
+            }
+            this.hostingEngine = builder.Build();
+
+            this.hostingEngine.Start();
+
+            this.ApplicationServices = this.hostingEngine.Services;
+            return (BackTelemetryChannel)this.hostingEngine.Services.GetService<ITelemetryChannel>();
         }
 
         public void Dispose()
@@ -71,11 +71,6 @@
             {
                 this.hostingEngine.Dispose();
             }
-        }
-        
-        private WebHostBuilder CreateBuilder(IConfiguration config)
-        {
-            return new WebHostBuilder(config);
         }
     }
 }

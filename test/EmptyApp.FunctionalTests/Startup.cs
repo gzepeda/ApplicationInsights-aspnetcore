@@ -1,26 +1,22 @@
-﻿using Xunit;
-
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
-namespace EmptyApp.FunctionalTests
+﻿namespace EmptyApp.FunctionalTests
 {
     using System;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.ApplicationInsights.Channel;
     using FunctionalTestUtils;
     using Microsoft.ApplicationInsights;
-    using Microsoft.ApplicationInsights.AspNet.Extensions;
-    using Microsoft.ApplicationInsights.Channel;
     using Microsoft.ApplicationInsights.DataContracts;
-    using Microsoft.AspNet.Builder;
-    using Microsoft.AspNet.Diagnostics;
-    using Microsoft.AspNet.Http;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
 
     public class Startup
     {
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddInstance<ITelemetryChannel>(new BackTelemetryChannel());
+            services.AddSingleton<ITelemetryChannel>(new BackTelemetryChannel());
 
             var builder = new ConfigurationBuilder();
             builder.AddApplicationInsightsSettings(instrumentationKey: "Foo");
@@ -29,10 +25,7 @@ namespace EmptyApp.FunctionalTests
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseApplicationInsightsRequestTelemetry();
-            app.UseDeveloperExceptionPage(new ErrorPageOptions());
-            app.UseApplicationInsightsExceptionTelemetry();
-
+            app.UseDeveloperExceptionPage();
             app.Use(next =>
             {
                 return async context =>

@@ -1,4 +1,5 @@
-﻿
+﻿using Microsoft.ApplicationInsights.DataContracts;
+
 namespace FunctionalTestUtils
 {
     using System;
