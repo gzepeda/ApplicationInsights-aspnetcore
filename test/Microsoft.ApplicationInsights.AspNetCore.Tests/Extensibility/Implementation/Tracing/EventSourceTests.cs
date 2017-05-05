@@ -94,7 +94,7 @@ namespace Microsoft.ApplicationInsights.AspNetCore.Tests.Extensibility.Implement
                 return Activator.CreateInstance(parameter.ParameterType);
             }
 
-            throw new NotSupportedException("Complex types are not suppored");
+            throw new NotSupportedException("The type" + parameterType.GetTypeInfo().Name + "is not supported");
         }
 
         /// <summary>
