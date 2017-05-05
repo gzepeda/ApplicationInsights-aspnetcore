@@ -1,37 +1,20 @@
 {
-   "buildOptions": {
+  "version": "1.0.2",
+  "buildOptions": {
     "keyFile": "../../keys/35MSSharedLib1024.snk",
     "delaySign": true,
-    "preserveCompilationContext": true,
+    "preserveCompilationContext": true
+  },
+  "dependencies": {
+    "Microsoft.ApplicationInsights.AspNetCore": {
+      "target": "project"
     },
-    "dependencies": {
-      "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-rc2-*",
-      "Microsoft.AspNetCore.Hosting": "1.0.0-rc2-*",
-      "xunit": "2.1.0",
-      "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-*",
-      "Microsoft.ApplicationInsights.AspNetCore": {
-        "target": "project"
-      }
-    },
-    "testRunner": "xunit",
-    "frameworks": {
-      "net451": {
-        "dependencies": {
-          "System.Net.Http": "4.0.0"
-        }
-      },
-      "netcoreapp1.0": {
-        "imports": [
-          "dnxcore50",
-          "dotnet5.4",
-          "portable-net45+win8"
-        ],
-        "dependencies": {
-          "Microsoft.NETCore.App": {
-            "type": "platform",
-            "version": "1.0.0-*"
-          }
-        }
-      }
-    }
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
+    "NETStandard.Library": "1.6.1",
+    "xunit": "2.2.0-*"
+  },
+  "frameworks": {
+    "net451": { },
+    "netstandard1.6": { }
+  }
 }

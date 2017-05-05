@@ -1,26 +1,28 @@
 ﻿namespace Microsoft.ApplicationInsights.AspNetCore.Tests.Helpers
 {
     using System;
+    using Microsoft.ApplicationInsights.AspNetCore.DiagnosticListeners;
     using Microsoft.ApplicationInsights.DataContracts;
-    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Http.Internal;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Abstractions;
     using Microsoft.AspNetCore.Mvc.Infrastructure;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Framework.DependencyInjection;
-    
+
     public static class HttpContextAccessorHelper
     {
-        public static HttpContextAccessor CreateHttpContextAccessor(RequestTelemetry requestTelemetry = null, ActionContext actionContext = null)
+        public static HttpContextAccessor CreateHttpContextAccessor(RequestTelemetry requestTelemetry = null, ActionContext actionContext = null, string httpContextCorrelationId = null)
         {
             var services = new ServiceCollection();
 
             var request = new DefaultHttpContext().Request;
             request.Method = "GET";
             request.Path = new PathString("/Test");
-            var contextAccessor = new HttpContextAccessor() { HttpContext = request.HttpContext };
+            if (httpContextCorrelationId != null)
+            {
+                HttpHeadersUtilities.SetRequestContextKeyValue(request.Headers, RequestResponseHeaders.RequestContextSourceKey, httpContextCorrelationId);
+            }
+
+            var contextAccessor = new HttpContextAccessor { HttpContext = request.HttpContext };
 
             services.AddSingleton<IHttpContextAccessor>(contextAccessor);
 
@@ -30,6 +32,25 @@
                 si.ActionContext = actionContext;
                 services.AddSingleton<IActionContextAccessor>(si);
             }
+
+            if (requestTelemetry != null)
+            {
+                request.HttpContext.Features.Set(requestTelemetry);
+            }
+
+            IServiceProvider serviceProvider = services.BuildServiceProvider();
+            contextAccessor.HttpContext.RequestServices = serviceProvider;
+
+            return contextAccessor;
+        }
+
+        public static HttpContextAccessor CreateHttpContextAccessorWithoutRequest(HttpContextStub httpContextStub, RequestTelemetry requestTelemetry = null)
+        {
+            var services = new ServiceCollection();
+
+            var contextAccessor = new HttpContextAccessor { HttpContext = httpContextStub };
+
+            services.AddSingleton<IHttpContextAccessor>(contextAccessor);
 
             if (requestTelemetry != null)
             {

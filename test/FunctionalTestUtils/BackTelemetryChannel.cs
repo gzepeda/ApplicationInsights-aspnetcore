@@ -36,12 +36,11 @@
         {
             get
             {
-                return string.Empty;
+                return "https://dc.services.visualstudio.com/v2/track";
             }
 
             set
             {
-                this.EndpointAddress = string.Empty;
             }
         }
 

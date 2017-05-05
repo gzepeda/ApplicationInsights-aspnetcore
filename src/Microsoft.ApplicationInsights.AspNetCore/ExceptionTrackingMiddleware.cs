@@ -9,6 +9,7 @@
     /// <summary>
     /// Sends telemetry about exceptions thrown by the application to the Microsoft Application Insights service.
     /// </summary>
+    [Obsolete]
     public sealed class ExceptionTrackingMiddleware
     {
         private readonly RequestDelegate next;
@@ -19,7 +20,7 @@
         {
             this.next = next;
             this.telemetryClient = client;
-            this.sdkVersion = SdkVersionUtils.VersionPrefix + SdkVersionUtils.GetFrameworkType() + SdkVersionUtils.GetAssemblyVersion();
+            this.sdkVersion = SdkVersionUtils.VersionPrefix + SdkVersionUtils.GetAssemblyVersion();
         }
 
         public async Task Invoke(HttpContext httpContext)

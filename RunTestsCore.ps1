@@ -27,13 +27,15 @@ Function Execute-DotnetProcess {
 	}
 }
 
+Push-Location
+
 [PSObject[]]$global:failed = @();
 $global:WorkingDirectory = (pwd).Path;
 
 $dotnetPath = "C:\Program Files\dotnet\dotnet.exe";
 
 $TestProjects |% {
-	[String]$arguments = "test -f netcoreapp1.0";
+	[String]$arguments = "test";
 	[String]$currentWorkingDirectory = Join-Path $global:WorkingDirectory -ChildPath $_;
 	Write-Host "=========================================================";
 	Write-Host "== Executing tests";
@@ -47,6 +49,8 @@ $TestProjects |% {
 	-Arguments $arguments `
 	-WorkingDirectory $currentWorkingDirectory;
 }
+
+Pop-Location
 
 If ($global:failed.Count -gt 0) {
 	Throw "Test execution failed";
