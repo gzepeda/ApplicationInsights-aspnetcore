@@ -23,12 +23,12 @@
 
             if (true == string.IsNullOrWhiteSpace(request.Scheme))
             {
-                throw new ArgumentException("Http request Scheme is not specified");
+                throw new ArgumentException("Http request Scheme is not specified. This generally occurs because the WebModel for the Request was not properly initialize");
             }
 
             if (false == request.Host.HasValue)
             {
-                throw new ArgumentException("Http request Host is not specified");
+                throw new ArgumentException("Http request Host is not specified. this generally occurs when Host header is not properly declare");
             }
 
             var builder = new StringBuilder();
